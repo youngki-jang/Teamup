@@ -11,7 +11,7 @@ export default function CheckIn() {
   const [code, setCode] = useState('')
   const [message, setMessage] = useState('')
 
-  const { data } = db.useQuery(
+  const { data: sessionData } = db.useQuery(
     code.length === 4
       ? {
           sessions: {
@@ -21,8 +21,12 @@ export default function CheckIn() {
         }
       : null
   )
+  const { data: profileData } = db.useQuery(
+    user ? { profiles: { $: { where: { '$user.id': user.id } } } } : null
+  )
 
-  const session = data?.sessions?.[0]
+  const session = sessionData?.sessions?.[0]
+  const profile = profileData?.profiles?.[0]
   const alreadyCheckedIn =
     session?.attendances?.some((a) => a.user?.id === user?.id) ?? false
 
@@ -30,30 +34,32 @@ export default function CheckIn() {
     e.preventDefault()
     if (!code.trim() || code.length !== 4 || !user) return
     if (!session) {
-      setMessage('세션 코드가 올바르지 않거나 만료되었습니다.')
+      setMessage('Invalid or expired session code.')
       return
     }
     if (alreadyCheckedIn) {
-      setMessage('이미 체크인되었습니다.')
+      setMessage('Already checked in.')
       navigate(`/my-team/${session.id}`)
       return
     }
     try {
       const attId = id()
+      const displayName = profile?.name || user.email
       await db.transact(
         db.tx.attendances[attId]
           .update({
             manuallyAdded: false,
             checkedInAt: Date.now(),
             userEmail: user.email,
+            displayName,
           })
           .link({ session: session.id, user: user.id })
       )
-      setMessage('체크인 완료!')
+      setMessage('Check-in complete!')
       setCode('')
       navigate(`/my-team/${session.id}`)
     } catch (err) {
-      setMessage(err?.message || '체크인 실패')
+      setMessage(err?.message || 'Check-in failed')
     }
   }
 
@@ -63,27 +69,27 @@ export default function CheckIn() {
     <EnsureProfile>
       <div className="checkin-page">
         <header>
-          <h1>체크인</h1>
+          <h1>Check-in</h1>
           <span>{user.email}</span>
           <button type="button" onClick={() => db.auth.signOut()}>
-            로그아웃
+            Sign out
           </button>
         </header>
         <main>
           <form onSubmit={handleCheckIn}>
             <input
               type="text"
-              placeholder="4자리 세션 코드"
+              placeholder="4-digit session code"
               value={code}
               onChange={(e) =>
                 setCode(e.target.value.replace(/\D/g, '').slice(0, 4))
               }
               maxLength={4}
             />
-            <button type="submit">체크인</button>
+            <button type="submit">Check in</button>
           </form>
           {message && (
-            <p className={message.includes('완료') ? 'success' : 'error'}>
+            <p className={message.includes('complete') ? 'success' : 'error'}>
               {message}
             </p>
           )}

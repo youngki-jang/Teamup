@@ -10,7 +10,7 @@ import './App.css'
 
 function ProtectedRoute({ children, requireOrganizer }) {
   const { isLoading, user } = db.useAuth()
-  if (isLoading) return <div className="loading">로딩 중...</div>
+  if (isLoading) return <div className="loading">Loading...</div>
   if (!user) return <Navigate to="/login" replace />
   return children
 }

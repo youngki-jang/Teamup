@@ -32,7 +32,7 @@ export default function MyTeam() {
     myGroup?.memberIds?.filter((id) => id !== user?.id) ?? []
   const teammates = teammateIds.map((uid) => {
     const att = attendances.find((a) => a.user?.id === uid)
-    return att ? { id: att.user?.id, email: att.userEmail || att.user?.email } : null
+    return att ? { id: att.user?.id, name: att.displayName || att.userEmail || att.user?.email } : null
   }).filter(Boolean)
 
   if (!user) return null
@@ -44,35 +44,35 @@ export default function MyTeam() {
           <h1>My Team</h1>
           <span>{user.email}</span>
           <button type="button" onClick={() => navigate('/check-in')}>
-            다른 세션 체크인
+            Check in to another session
           </button>
           <button type="button" onClick={() => db.auth.signOut()}>
-            로그아웃
+            Sign out
           </button>
         </header>
 
         <main>
           {!session ? (
-            <p className="error">세션을 찾을 수 없습니다.</p>
+            <p className="error">Session not found.</p>
           ) : !myAttendance ? (
             <p className="error">
-              이 세션에 체크인되어 있지 않습니다. 먼저 체크인해 주세요.
+              You are not checked in to this session. Please check in first.
             </p>
           ) : !myGroup ? (
-            <p className="waiting">그룹이 아직 배정되지 않았습니다.</p>
+            <p className="waiting">Groups have not been assigned yet.</p>
           ) : (
             <>
               <p className="group-badge">
                 You are in Group {myGroup.groupNumber}
               </p>
               <div className="teammates">
-                <h2>팀원</h2>
+                <h2>Teammates</h2>
                 {teammates.length === 0 ? (
-                  <p>팀원이 없습니다. (혼자인 그룹)</p>
+                  <p>No teammates. (Solo group)</p>
                 ) : (
                   <ul>
                     {teammates.map((t) => (
-                      <li key={t.id}>{t.email}</li>
+                      <li key={t.id}>{t.name}</li>
                     ))}
                   </ul>
                 )}

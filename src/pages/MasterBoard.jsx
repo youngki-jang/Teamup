@@ -22,19 +22,19 @@ export default function MasterBoard() {
   const groups = session?.groups ?? []
   const attendances = session?.attendances ?? []
 
-  const emailMap = Object.fromEntries(
+  const nameMap = Object.fromEntries(
     attendances
-      .map((a) => [a.user?.id, a.userEmail || a.user?.email])
+      .map((a) => [a.user?.id, a.displayName || a.userEmail || a.user?.email])
       .filter(([id]) => id)
   )
 
   return (
     <div className="master-board">
-      <h1>TeamUp — 그룹 배정</h1>
+      <h1>TeamUp — Group Assignment</h1>
       {!session ? (
-        <p>세션을 찾을 수 없습니다.</p>
+        <p>Session not found.</p>
       ) : groups.length === 0 ? (
-        <p className="empty-state">그룹이 아직 배정되지 않았습니다.</p>
+        <p className="empty-state">Groups have not been assigned yet.</p>
       ) : (
         <div className="groups-grid">
           {groups
@@ -44,7 +44,7 @@ export default function MasterBoard() {
                 <h2>Group {g.groupNumber}</h2>
                 <p>
                   {(g.memberIds ?? [])
-                    .map((uid) => emailMap[uid] ?? uid)
+                    .map((uid) => nameMap[uid] ?? uid)
                     .join(', ')}
                 </p>
               </div>

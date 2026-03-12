@@ -44,7 +44,7 @@ export default function OrganizerConsole() {
       navigate(`/organizer/sessions/${sid}`)
       setMessage('')
     } catch (err) {
-      setMessage(err?.message || '세션 생성 실패')
+      setMessage(err?.message || 'Failed to create session')
     }
   }
 
@@ -58,20 +58,20 @@ export default function OrganizerConsole() {
     <EnsureProfile>
       <div className="organizer-console">
         <header>
-          <h1>관리자 콘솔</h1>
+          <h1>Organizer Console</h1>
           <div>
             <span>{user.email}</span>
             <button type="button" onClick={() => db.auth.signOut()}>
-              로그아웃
+              Sign out
             </button>
           </div>
         </header>
 
         <main>
           <section>
-            <h2>세션</h2>
+            <h2>Sessions</h2>
             <button type="button" onClick={createSession}>
-              세션 생성
+              Create session
             </button>
           </section>
 

@@ -7,6 +7,7 @@ const schema = i.schema({
     }),
     profiles: i.entity({
       role: i.string(), // 'organizer' | 'student'
+      name: i.string().optional(), // display name for students
     }),
     sessions: i.entity({
       code: i.string().unique().indexed(),
@@ -16,7 +17,8 @@ const schema = i.schema({
     attendances: i.entity({
       manuallyAdded: i.boolean(),
       checkedInAt: i.number(),
-      userEmail: i.string().optional(), // denormalized for display (e.g. master board)
+      userEmail: i.string().optional(), // denormalized for display
+      displayName: i.string().optional(), // name for group display (preferred over email)
     }),
     groups: i.entity({
       groupNumber: i.number(),

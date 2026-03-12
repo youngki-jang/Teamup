@@ -45,18 +45,18 @@ export default function OrganizerSession() {
       await db.transact(db.tx.attendances[attId].delete())
       setMessage('')
     } catch (err) {
-      setMessage(err?.message || '제거 실패')
+      setMessage(err?.message || 'Failed to remove')
     }
   }
 
   const shuffle = async () => {
     if (!session || attendances.length === 0) {
-      setMessage('출석자가 없습니다.')
+      setMessage('No attendees yet.')
       return
     }
     const attendeeIds = attendances.map((a) => a.user?.id).filter(Boolean)
     if (attendeeIds.length === 0) {
-      setMessage('출석자 ID를 가져올 수 없습니다.')
+      setMessage('Could not get attendee IDs.')
       return
     }
     const newGroups = createBalancedGroups(attendeeIds, groupMode, groupValue)
@@ -72,7 +72,7 @@ export default function OrganizerSession() {
       await db.transact(db.tx.sessions[session.id].update({ status: 'grouped' }))
       setMessage('')
     } catch (err) {
-      setMessage(err?.message || 'Shuffle 실패')
+      setMessage(err?.message || 'Shuffle failed')
     }
   }
 
@@ -86,14 +86,14 @@ export default function OrganizerSession() {
     <EnsureProfile>
       <div className="organizer-console">
         <header>
-          <h1>관리자 콘솔</h1>
+          <h1>Organizer Console</h1>
           <div>
             <span>{user.email}</span>
             <button type="button" onClick={() => db.auth.signOut()}>
-              로그아웃
+              Sign out
             </button>
             <button type="button" onClick={() => navigate('/organizer')}>
-              새 세션
+              New session
             </button>
           </div>
         </header>
@@ -102,26 +102,26 @@ export default function OrganizerSession() {
           {session ? (
             <>
               <section>
-                <h2>세션</h2>
+                <h2>Session</h2>
                 <p className="session-code">
-                  세션 코드: <strong>{session.code}</strong>
+                  Session code: <strong>{session.code}</strong>
                 </p>
               </section>
               <section>
-                <h2>출석 목록 ({attendances.length}명)</h2>
+                <h2>Attendance ({attendances.length})</h2>
                 <div className="attendance-list">
                   {attendances.length === 0 ? (
-                    <p>출석자 없음</p>
+                    <p>No attendees</p>
                   ) : (
                     attendances.map((a) => (
                       <div key={a.id} className="attendance-item">
-                        <span>{a.userEmail || a.user?.email || '?'}</span>
-                        {a.manuallyAdded && <span className="badge">수동</span>}
+                        <span>{a.displayName || a.userEmail || a.user?.email || '?'}</span>
+                        {a.manuallyAdded && <span className="badge">Manual</span>}
                         <button
                           type="button"
                           onClick={() => removeAttendance(a.id)}
                         >
-                          제거
+                          Remove
                         </button>
                       </div>
                     ))
@@ -129,14 +129,14 @@ export default function OrganizerSession() {
                 </div>
               </section>
               <section>
-                <h2>그룹 배정</h2>
+                <h2>Group assignment</h2>
                 <div className="group-controls">
                   <select
                     value={groupMode}
                     onChange={(e) => setGroupMode(e.target.value)}
                   >
-                    <option value="perGroup">그룹당 인원</option>
-                    <option value="totalGroups">총 그룹 수</option>
+                    <option value="perGroup">Members per group</option>
+                    <option value="totalGroups">Total groups</option>
                   </select>
                   <input
                     type="number"
@@ -150,7 +150,7 @@ export default function OrganizerSession() {
                 </div>
                 <div className="groups-preview">
                   {groups.length === 0 ? (
-                    <p>Shuffle 실행 후 그룹이 표시됩니다.</p>
+                    <p>Groups will appear after you run Shuffle.</p>
                   ) : (
                     groups
                       .sort((a, b) => a.groupNumber - b.groupNumber)
@@ -160,12 +160,10 @@ export default function OrganizerSession() {
                           <p>
                             {g.memberIds
                               ?.map(
-                                (uid) =>
-                                    attendances.find((a) => a.user?.id === uid)
-                                      ?.userEmail ||
-                                    attendances.find((a) => a.user?.id === uid)
-                                      ?.user?.email ||
-                                    uid
+                                (uid) => {
+                                  const att = attendances.find((a) => a.user?.id === uid)
+                                  return att?.displayName || att?.userEmail || att?.user?.email || uid
+                                }
                               )
                               .join(', ')}
                           </p>
@@ -181,13 +179,13 @@ export default function OrganizerSession() {
                       window.open(`/master/${session.id}`, '_blank')
                     }
                   >
-                    마스터 보드 열기
+                    Open Master Board
                   </button>
                 )}
               </section>
             </>
           ) : (
-            <p>세션을 찾을 수 없습니다.</p>
+            <p>Session not found.</p>
           )}
           {message && <p className="error-message">{message}</p>}
         </main>
