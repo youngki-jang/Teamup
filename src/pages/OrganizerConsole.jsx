@@ -20,31 +20,42 @@ export default function OrganizerConsole() {
           profiles: {
             $: { where: { $user: user.id } },
           },
+          sessions: {
+            $: { where: { 'organizer.id': user.id } },
+            groups: {},
+          },
         }
       : null
   )
 
   const profile = data?.profiles?.[0]
+  const sessions = data?.sessions ?? []
   const isOrganizer = profile?.role === 'organizer'
+
+  const activeSessions = sessions.filter((s) => s.status !== 'ended')
+  const pastSessions = sessions.filter((s) => s.status === 'ended')
 
   const createSession = async () => {
     if (!user || !isOrganizer) return
-    const code = generateCode()
-    const sid = id()
-    try {
-      await db.transact(
-        db.tx.sessions[sid]
-          .update({
-            code,
-            status: 'active',
-            createdAt: Date.now(),
-          })
-          .link({ organizer: user.id })
-      )
-      navigate(`/organizer/sessions/${sid}`)
-      setMessage('')
-    } catch (err) {
-      setMessage(err?.message || 'Failed to create session')
+    for (let i = 0; i < 5; i++) {
+      const code = generateCode()
+      const sid = id()
+      try {
+        await db.transact(
+          db.tx.sessions[sid]
+            .update({
+              code,
+              status: 'active',
+              createdAt: Date.now(),
+            })
+            .link({ organizer: user.id })
+        )
+        navigate(`/organizer/sessions/${sid}`)
+        setMessage('')
+        return
+      } catch (err) {
+        if (i === 4) setMessage(err?.message || 'Failed to create session')
+      }
     }
   }
 
@@ -73,7 +84,43 @@ export default function OrganizerConsole() {
             <button type="button" onClick={createSession}>
               Create session
             </button>
+            {activeSessions.length > 0 && (
+              <ul className="session-list">
+                {activeSessions
+                  .sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0))
+                  .map((s) => (
+                    <li key={s.id}>
+                      <button
+                        type="button"
+                        onClick={() => navigate(`/organizer/sessions/${s.id}`)}
+                      >
+                        Code {s.code} — {s.status}
+                      </button>
+                    </li>
+                  ))}
+              </ul>
+            )}
           </section>
+
+          {pastSessions.length > 0 && (
+            <section>
+              <h2>History (past sessions)</h2>
+              <ul className="session-list">
+                {pastSessions
+                  .sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0))
+                  .map((s) => (
+                    <li key={s.id}>
+                      <button
+                        type="button"
+                        onClick={() => navigate(`/organizer/sessions/${s.id}`)}
+                      >
+                        Code {s.code} — {new Date(s.createdAt).toLocaleDateString()}
+                      </button>
+                    </li>
+                  ))}
+              </ul>
+            </section>
+          )}
 
           {message && <p className="error-message">{message}</p>}
         </main>

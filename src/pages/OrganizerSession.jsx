@@ -49,6 +49,16 @@ export default function OrganizerSession() {
     }
   }
 
+  const endSession = async () => {
+    if (!session) return
+    try {
+      await db.transact(db.tx.sessions[session.id].update({ status: 'ended' }))
+      setMessage('')
+    } catch (err) {
+      setMessage(err?.message || 'Failed to end session')
+    }
+  }
+
   const shuffle = async () => {
     if (!session || attendances.length === 0) {
       setMessage('No attendees yet.')
@@ -105,6 +115,18 @@ export default function OrganizerSession() {
                 <h2>Session</h2>
                 <p className="session-code">
                   Session code: <strong>{session.code}</strong>
+                  {session.status === 'ended' && (
+                    <span className="badge ended">Ended</span>
+                  )}
+                  {session.status !== 'ended' && (
+                    <button
+                      type="button"
+                      className="end-session-btn"
+                      onClick={endSession}
+                    >
+                      End session
+                    </button>
+                  )}
                 </p>
               </section>
               <section>
@@ -120,6 +142,7 @@ export default function OrganizerSession() {
                         <button
                           type="button"
                           onClick={() => removeAttendance(a.id)}
+                          disabled={session.status === 'ended'}
                         >
                           Remove
                         </button>
@@ -130,6 +153,9 @@ export default function OrganizerSession() {
               </section>
               <section>
                 <h2>Group assignment</h2>
+                {session.status === 'ended' ? (
+                  <p className="session-ended-hint">This session has ended. View only.</p>
+                ) : null}
                 <div className="group-controls">
                   <select
                     value={groupMode}
@@ -144,7 +170,11 @@ export default function OrganizerSession() {
                     value={groupValue}
                     onChange={(e) => setGroupValue(Number(e.target.value))}
                   />
-                  <button type="button" onClick={shuffle}>
+                  <button
+                    type="button"
+                    onClick={shuffle}
+                    disabled={session.status === 'ended'}
+                  >
                     Shuffle
                   </button>
                 </div>

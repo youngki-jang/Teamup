@@ -11,11 +11,18 @@ export default function CheckIn() {
   const [code, setCode] = useState('')
   const [message, setMessage] = useState('')
 
+  const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000
   const { data: sessionData } = db.useQuery(
     code.length === 4
       ? {
           sessions: {
-            $: { where: { code, status: { $in: ['active', 'grouped'] } } },
+            $: {
+              where: {
+                code,
+                status: { $in: ['active', 'grouped'] },
+                createdAt: { $gt: weekAgo },
+              },
+            },
             attendances: { user: {} },
           },
         }

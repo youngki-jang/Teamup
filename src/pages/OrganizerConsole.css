@@ -20,8 +20,48 @@
   margin-bottom: 2rem;
 }
 
+.organizer-console .session-code {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
 .organizer-console .session-code strong {
   font-size: 1.5rem;
+}
+
+.organizer-console .end-session-btn {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
+  background: #c33;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.organizer-console .session-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0;
+}
+
+.organizer-console .session-list li {
+  margin-bottom: 0.5rem;
+}
+
+.organizer-console .session-list button {
+  padding: 0.5rem 1rem;
+  background: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+}
+
+.organizer-console .session-list button:hover {
+  background: #e5e5e5;
 }
 
 .organizer-console .attendance-list {
@@ -41,6 +81,17 @@
   background: #eee;
   padding: 0.1rem 0.4rem;
   border-radius: 4px;
+}
+
+.organizer-console .badge.ended {
+  background: #c33;
+  color: #fff;
+}
+
+.organizer-console .session-ended-hint {
+  color: #666;
+  font-size: 0.9rem;
+  margin: 0.5rem 0;
 }
 
 .organizer-console .add-form {
