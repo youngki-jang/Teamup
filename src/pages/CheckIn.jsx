@@ -15,7 +15,7 @@ export default function CheckIn() {
     code.length === 4
       ? {
           sessions: {
-            $: { where: { code, status: 'active' } },
+            $: { where: { code, status: { $in: ['active', 'grouped'] } } },
             attendances: { user: {} },
           },
         }
