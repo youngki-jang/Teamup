@@ -62,9 +62,7 @@ export default function OrganizerSession() {
   const deleteSession = async () => {
     if (!session || !confirm('Delete this session? This cannot be undone.')) return
     try {
-      const groupTxs = groups.map((g) => db.tx.groups[g.id].delete())
-      const attTxs = attendances.map((a) => db.tx.attendances[a.id].delete())
-      await db.transact([...groupTxs, ...attTxs, db.tx.sessions[session.id].delete()])
+      await db.transact(db.tx.sessions[session.id].delete())
       navigate('/organizer')
     } catch (err) {
       setMessage(err?.message || 'Failed to delete session')

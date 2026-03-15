@@ -54,7 +54,6 @@ export default function OrganizerConsole() {
           sessions: {
             $: { where: { 'organizer.id': user.id } },
             groups: {},
-            attendances: {},
           },
           roster_lists: {
             $: { where: { 'organizer.id': user.id } },
@@ -104,12 +103,8 @@ export default function OrganizerConsole() {
 
   const deleteSession = async (s) => {
     if (!confirm(`Delete session ${s.code}? This cannot be undone.`)) return
-    const groups = s.groups ?? []
-    const attendances = s.attendances ?? []
     try {
-      const groupTxs = groups.map((g) => db.tx.groups[g.id].delete())
-      const attTxs = attendances.map((a) => db.tx.attendances[a.id].delete())
-      await db.transact([...groupTxs, ...attTxs, db.tx.sessions[s.id].delete()])
+      await db.transact(db.tx.sessions[s.id].delete())
       setMessage('')
     } catch (err) {
       setMessage(err?.message || 'Failed to delete session')
