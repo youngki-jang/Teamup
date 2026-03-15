@@ -29,16 +29,12 @@ export default function Login() {
   const handleSendCode = async (e) => {
     e.preventDefault()
     if (!email.trim()) return
-    if (tab === 'student' && !name.trim()) {
-      setMessage('Please enter your name.')
-      return
-    }
     setLoading(true)
     setMessage('')
     try {
       await db.auth.sendMagicCode({ email: email.trim() })
       setSentEmail(email.trim())
-      if (tab === 'student') {
+      if (tab === 'student' && name.trim()) {
         try { localStorage.setItem('pendingDisplayName', name.trim()) } catch (_) {}
       }
       setMessage('Verification code sent to your email. Check and enter it.')
@@ -103,10 +99,9 @@ export default function Login() {
             {tab === 'student' && (
               <input
                 type="text"
-                placeholder="Your name"
+                placeholder="Your name (optional)"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                required
               />
             )}
             <button type="submit" disabled={loading}>
