@@ -15,6 +15,14 @@ const rules = {
       update: 'auth.id in data.ref("$user.id")',
     },
   },
+  roster_lists: {
+    allow: {
+      view: 'auth.id in data.ref("organizer.id")',
+      create: 'auth.id != null',
+      update: 'auth.id in data.ref("organizer.id")',
+      delete: 'auth.id in data.ref("organizer.id")',
+    },
+  },
   sessions: {
     allow: {
       view: 'auth.id != null || (ruleParams.publicView == true && ruleParams.sessionId == data.id)',

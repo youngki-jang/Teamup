@@ -115,6 +115,9 @@ export default function OrganizerSession() {
                 <h2>Session</h2>
                 <p className="session-code">
                   Session code: <strong>{session.code}</strong>
+                  {session.allowedEmails?.length > 0 && (
+                    <span className="badge roster">Roster: {session.allowedEmails.length}</span>
+                  )}
                   {session.status === 'ended' && (
                     <span className="badge ended">Ended</span>
                   )}

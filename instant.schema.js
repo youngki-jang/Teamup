@@ -9,10 +9,15 @@ const schema = i.schema({
       role: i.string(), // 'organizer' | 'student'
       name: i.string().optional(), // display name for students
     }),
+    roster_lists: i.entity({
+      name: i.string(), // e.g. "CS101 Fall 2025"
+      entries: i.json(), // [{ email, name }] from Canvas export
+    }),
     sessions: i.entity({
       code: i.string().unique().indexed(),
       status: i.string(), // 'active' | 'grouped' | 'ended'
       createdAt: i.number(),
+      allowedEmails: i.json().optional(), // [{ email, name }] denormalized from roster for check-in
     }),
     attendances: i.entity({
       manuallyAdded: i.boolean(),
@@ -45,6 +50,14 @@ const schema = i.schema({
     groupSession: {
       forward: { on: 'groups', has: 'one', label: 'session' },
       reverse: { on: 'sessions', has: 'many', label: 'groups' },
+    },
+    rosterListOrganizer: {
+      forward: { on: 'roster_lists', has: 'one', label: 'organizer' },
+      reverse: { on: '$users', has: 'many', label: 'roster_lists' },
+    },
+    sessionRosterList: {
+      forward: { on: 'sessions', has: 'one', label: 'rosterList' },
+      reverse: { on: 'roster_lists', has: 'many', label: 'sessions' },
     },
   },
 })

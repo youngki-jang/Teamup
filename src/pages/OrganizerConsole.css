@@ -88,6 +88,63 @@
   color: #fff;
 }
 
+.organizer-console .badge.roster {
+  background: #07a;
+  color: #fff;
+}
+
+.organizer-console .hint {
+  color: #666;
+  font-size: 0.9rem;
+  margin: 0.5rem 0;
+}
+
+.organizer-console .roster-form input,
+.organizer-console .roster-form textarea {
+  display: block;
+  width: 100%;
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+}
+
+.organizer-console .roster-form textarea {
+  font-family: inherit;
+  resize: vertical;
+}
+
+.organizer-console .roster-form div {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.organizer-console .roster-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0;
+}
+
+.organizer-console .roster-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+.organizer-console .create-with-roster {
+  margin-top: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.organizer-console .create-with-roster span {
+  width: 100%;
+  font-size: 0.9rem;
+  color: #666;
+}
+
 .organizer-console .session-ended-hint {
   color: #666;
   font-size: 0.9rem;

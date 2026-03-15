@@ -47,6 +47,14 @@ export default function CheckIn() {
       setMessage('This session has expired (older than 7 days).')
       return
     }
+    const roster = session.rosterList
+    if (roster?.entries?.length) {
+      const allowedEmails = roster.entries.map((e) => e.email?.toLowerCase()).filter(Boolean)
+      if (!allowedEmails.includes(user.email?.toLowerCase())) {
+        setMessage('Your email is not in this session roster. Contact the organizer.')
+        return
+      }
+    }
     if (alreadyCheckedIn) {
       setMessage('Already checked in.')
       navigate(`/my-team/${session.id}`)
@@ -54,7 +62,14 @@ export default function CheckIn() {
     }
     try {
       const attId = id()
-      const displayName = profile?.name || user.email
+      let displayName = profile?.name || user.email
+      if (allowed.length > 0) {
+        const entry = allowed.find((e) => {
+          const em = typeof e === 'object' ? e?.email : e
+          return em?.toLowerCase() === user.email?.toLowerCase()
+        })
+        if (entry && typeof entry === 'object' && entry.name) displayName = entry.name
+      }
       await db.transact(
         db.tx.attendances[attId]
           .update({
