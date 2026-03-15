@@ -18,12 +18,9 @@ const rules = {
   roster_lists: {
     allow: {
       view: 'auth.id in data.ref("organizer.id")',
-      create: 'auth.id != null',
+      create: 'true',
       update: 'auth.id in data.ref("organizer.id")',
       delete: 'auth.id in data.ref("organizer.id")',
-      link: {
-        organizer: 'auth.id != null',
-      },
     },
   },
   sessions: {
