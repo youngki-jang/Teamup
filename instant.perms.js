@@ -21,6 +21,9 @@ const rules = {
       create: 'auth.id != null',
       update: 'auth.id in data.ref("organizer.id")',
       delete: 'auth.id in data.ref("organizer.id")',
+      link: {
+        organizer: 'auth.id != null',
+      },
     },
   },
   sessions: {
