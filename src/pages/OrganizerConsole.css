@@ -183,10 +183,25 @@
   margin-bottom: 0.5rem;
 }
 
-.organizer-console .broadcast-btn {
+.organizer-console .group-actions {
   margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.organizer-console .broadcast-btn {
   padding: 0.75rem 1.5rem;
   background: #0a5;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.organizer-console .export-btn {
+  padding: 0.75rem 1.5rem;
+  background: #07a;
   color: #fff;
   border: none;
   border-radius: 8px;

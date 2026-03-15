@@ -59,6 +59,27 @@ export default function OrganizerSession() {
     }
   }
 
+  const exportGroupsCsv = () => {
+    if (groups.length === 0) return
+    const rows = []
+    for (const att of attendances) {
+      const uid = att.user?.id
+      const group = groups.find((g) => g.memberIds?.includes(uid))
+      const email = att.userEmail || att.user?.email || ''
+      const name = att.displayName || att.userEmail || att.user?.email || ''
+      const groupNum = group?.groupNumber ?? ''
+      rows.push([email, name, groupNum])
+    }
+    const csv = ['email,name,group', ...rows.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(','))].join('\n')
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `groups-session-${session.code}.csv`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   const shuffle = async () => {
     if (!session || attendances.length === 0) {
       setMessage('No attendees yet.')
@@ -205,15 +226,24 @@ export default function OrganizerSession() {
                   )}
                 </div>
                 {groups.length > 0 && (
-                  <button
-                    type="button"
-                    className="broadcast-btn"
-                    onClick={() =>
-                      window.open(`/master/${session.id}`, '_blank')
-                    }
-                  >
-                    Open Master Board
-                  </button>
+                  <div className="group-actions">
+                    <button
+                      type="button"
+                      className="broadcast-btn"
+                      onClick={() =>
+                        window.open(`/master/${session.id}`, '_blank')
+                      }
+                    >
+                      Open Master Board
+                    </button>
+                    <button
+                      type="button"
+                      className="export-btn"
+                      onClick={exportGroupsCsv}
+                    >
+                      Export (email, name, group#)
+                    </button>
+                  </div>
                 )}
               </section>
             </>
