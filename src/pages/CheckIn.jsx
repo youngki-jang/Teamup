@@ -11,7 +11,6 @@ export default function CheckIn() {
   const [code, setCode] = useState('')
   const [message, setMessage] = useState('')
 
-  const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000
   const { data: sessionData } = db.useQuery(
     code.length === 4
       ? {
@@ -20,7 +19,6 @@ export default function CheckIn() {
               where: {
                 code,
                 status: { $in: ['active', 'grouped'] },
-                createdAt: { $gt: weekAgo },
               },
             },
             attendances: { user: {} },
@@ -42,6 +40,11 @@ export default function CheckIn() {
     if (!code.trim() || code.length !== 4 || !user) return
     if (!session) {
       setMessage('Invalid or expired session code.')
+      return
+    }
+    const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000
+    if ((session.createdAt ?? 0) < weekAgo) {
+      setMessage('This session has expired (older than 7 days).')
       return
     }
     if (alreadyCheckedIn) {
