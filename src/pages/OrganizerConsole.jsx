@@ -54,6 +54,7 @@ export default function OrganizerConsole() {
           sessions: {
             $: { where: { 'organizer.id': user.id } },
             groups: {},
+            attendances: {},
           },
           roster_lists: {
             $: { where: { 'organizer.id': user.id } },
@@ -98,6 +99,20 @@ export default function OrganizerConsole() {
       await db.transact(db.tx.roster_lists[rid].delete())
     } catch (err) {
       setMessage(err?.message || 'Failed to delete')
+    }
+  }
+
+  const deleteSession = async (s) => {
+    if (!confirm(`Delete session ${s.code}? This cannot be undone.`)) return
+    const groups = s.groups ?? []
+    const attendances = s.attendances ?? []
+    try {
+      const groupTxs = groups.map((g) => db.tx.groups[g.id].delete())
+      const attTxs = attendances.map((a) => db.tx.attendances[a.id].delete())
+      await db.transact([...groupTxs, ...attTxs, db.tx.sessions[s.id].delete()])
+      setMessage('')
+    } catch (err) {
+      setMessage(err?.message || 'Failed to delete session')
     }
   }
 
@@ -222,13 +237,14 @@ export default function OrganizerConsole() {
                 {activeSessions
                   .sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0))
                   .map((s) => (
-                    <li key={s.id}>
+                    <li key={s.id} className="session-list-item">
                       <button
                         type="button"
                         onClick={() => navigate(`/organizer/sessions/${s.id}`)}
                       >
                         Code {s.code} — {s.status}
                       </button>
+                      <button type="button" className="delete-btn" onClick={(e) => { e.stopPropagation(); deleteSession(s) }} title="Delete">×</button>
                     </li>
                   ))}
               </ul>
@@ -242,13 +258,14 @@ export default function OrganizerConsole() {
                 {pastSessions
                   .sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0))
                   .map((s) => (
-                    <li key={s.id}>
+                    <li key={s.id} className="session-list-item">
                       <button
                         type="button"
                         onClick={() => navigate(`/organizer/sessions/${s.id}`)}
                       >
                         Code {s.code} — {new Date(s.createdAt).toLocaleDateString()}
                       </button>
+                      <button type="button" className="delete-btn" onClick={(e) => { e.stopPropagation(); deleteSession(s) }} title="Delete">×</button>
                     </li>
                   ))}
               </ul>

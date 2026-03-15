@@ -59,6 +59,18 @@ export default function OrganizerSession() {
     }
   }
 
+  const deleteSession = async () => {
+    if (!session || !confirm('Delete this session? This cannot be undone.')) return
+    try {
+      const groupTxs = groups.map((g) => db.tx.groups[g.id].delete())
+      const attTxs = attendances.map((a) => db.tx.attendances[a.id].delete())
+      await db.transact([...groupTxs, ...attTxs, db.tx.sessions[session.id].delete()])
+      navigate('/organizer')
+    } catch (err) {
+      setMessage(err?.message || 'Failed to delete session')
+    }
+  }
+
   const exportGroupsCsv = () => {
     if (groups.length === 0) return
     const rows = []
@@ -151,6 +163,13 @@ export default function OrganizerSession() {
                       End session
                     </button>
                   )}
+                  <button
+                    type="button"
+                    className="delete-session-btn"
+                    onClick={deleteSession}
+                  >
+                    Delete session
+                  </button>
                 </p>
               </section>
               <section>
