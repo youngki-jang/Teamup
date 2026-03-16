@@ -15,7 +15,7 @@ const schema = i.schema({
       organizerId: i.string().indexed().optional(), // user id (optional for old records)
     }),
     sessions: i.entity({
-      code: i.string().unique().indexed(),
+      code: i.string().indexed(),
       status: i.string(), // 'active' | 'grouped' | 'ended'
       createdAt: i.number(),
       allowedEmails: i.json().optional(), // [{ email, name }] denormalized from roster for check-in

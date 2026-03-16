@@ -5,7 +5,8 @@ import { db } from '../lib/db'
 const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL || 'admin@example.com'
 
 /**
- * 로그인한 사용자의 profile이 없으면 생성 (organizer/student 역할)
+ * Creates a profile for the logged-in user if one doesn't exist.
+ * Assigns 'organizer' or 'student' role based on email.
  */
 export default function EnsureProfile({ children }) {
   const user = db.useUser()

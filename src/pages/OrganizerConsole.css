@@ -75,8 +75,8 @@
 
 .organizer-console .session-list button:not(.delete-btn) {
   padding: 0.5rem 1rem;
-  background: #f0f0f0;
-  border: 1px solid #ddd;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   cursor: pointer;
   width: 100%;
@@ -84,7 +84,7 @@
 }
 
 .organizer-console .session-list button:not(.delete-btn):hover {
-  background: #e5e5e5;
+  background: var(--bg-hover);
 }
 
 .organizer-console .session-list-item button:first-child {
@@ -114,12 +114,12 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 0;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border-light);
 }
 
 .organizer-console .badge {
   font-size: 0.75rem;
-  background: #eee;
+  background: var(--bg-card);
   padding: 0.1rem 0.4rem;
   border-radius: 4px;
 }
@@ -135,7 +135,7 @@
 }
 
 .organizer-console .hint {
-  color: #666;
+  color: var(--text-muted);
   font-size: 0.9rem;
   margin: 0.5rem 0;
 }
@@ -169,7 +169,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 0.5rem 0;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border-light);
 }
 
 .organizer-console .create-with-roster {
@@ -183,11 +183,11 @@
 .organizer-console .create-with-roster span {
   width: 100%;
   font-size: 0.9rem;
-  color: #666;
+  color: var(--text-muted);
 }
 
 .organizer-console .session-ended-hint {
-  color: #666;
+  color: var(--text-muted);
   font-size: 0.9rem;
   margin: 0.5rem 0;
 }
@@ -219,7 +219,7 @@
 
 .organizer-console .group-card {
   padding: 0.75rem;
-  background: #f5f5f5;
+  background: var(--bg-card);
   border-radius: 8px;
   margin-bottom: 0.5rem;
 }
@@ -250,5 +250,5 @@
 }
 
 .error-message {
-  color: #c00;
+  color: #e53;
 }

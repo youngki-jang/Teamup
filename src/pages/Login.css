@@ -14,7 +14,7 @@
 
 .subtitle {
   margin: 0 0 2rem 0;
-  color: #666;
+  color: var(--text-muted);
 }
 
 .login-tabs {
@@ -25,16 +25,16 @@
 
 .login-tabs button {
   padding: 0.5rem 1.5rem;
-  border: 1px solid #ccc;
-  background: #fff;
+  border: 1px solid var(--border-color);
+  background: var(--bg-surface);
   cursor: pointer;
   border-radius: 4px;
 }
 
 .login-tabs button.active {
-  background: #333;
-  color: #fff;
-  border-color: #333;
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  border-color: var(--btn-primary-bg);
 }
 
 .login-form-wrap {
@@ -44,7 +44,7 @@
 
 .hint {
   font-size: 0.9rem;
-  color: #666;
+  color: var(--text-muted);
   margin-bottom: 1rem;
 }
 
@@ -56,14 +56,14 @@
 
 .login-form input {
   padding: 0.75rem;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color);
   border-radius: 4px;
 }
 
 .login-form button {
   padding: 0.75rem;
-  background: #333;
-  color: #fff;
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -71,7 +71,7 @@
 
 .login-form button.back {
   background: transparent;
-  color: #666;
+  color: var(--text-muted);
 }
 
 .sent-to {
@@ -81,6 +81,6 @@
 
 .message {
   margin-top: 1rem;
-  color: #c00;
+  color: #e53;
   font-size: 0.9rem;
 }

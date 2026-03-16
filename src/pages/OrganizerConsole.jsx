@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { id } from '@instantdb/react'
 import { db } from '../lib/db'
@@ -45,7 +45,7 @@ export default function OrganizerConsole() {
   const [newRosterName, setNewRosterName] = useState('')
   const [newRosterPaste, setNewRosterPaste] = useState('')
 
-  const { data } = db.useQuery(
+  const { data, isLoading } = db.useQuery(
     user
       ? {
           profiles: {
@@ -115,38 +115,42 @@ export default function OrganizerConsole() {
 
   const createSession = async (rosterListId = null) => {
     if (!user || !isOrganizer) return
-    for (let i = 0; i < 5; i++) {
-      const code = generateCode()
-      const sid = id()
-      try {
-        const rosterList = rosterListId ? rosterLists.find((r) => r.id === rosterListId) : null
-        const allowedEmails = rosterList?.entries ?? null
-        const links = { organizer: user.id }
-        if (rosterListId) links.rosterList = rosterListId
-        await db.transact(
-          db.tx.sessions[sid]
-            .update({
-              code,
-              status: 'active',
-              createdAt: Date.now(),
-              allowedEmails,
-            })
-            .link(links)
-        )
-        navigate(`/organizer/sessions/${sid}`)
-        setMessage('')
-        return
-      } catch (err) {
-        if (i === 4) setMessage(err?.message || 'Failed to create session')
-      }
+    const activeCodes = new Set(
+      sessions.filter((s) => s.status !== 'ended').map((s) => s.code)
+    )
+    let code
+    for (let i = 0; i < 20; i++) {
+      const candidate = generateCode()
+      if (!activeCodes.has(candidate)) { code = candidate; break }
+    }
+    if (!code) {
+      setMessage('Could not generate a unique session code. Try again.')
+      return
+    }
+    const sid = id()
+    try {
+      const rosterList = rosterListId ? rosterLists.find((r) => r.id === rosterListId) : null
+      const allowedEmails = rosterList?.entries ?? null
+      const links = { organizer: user.id }
+      if (rosterListId) links.rosterList = rosterListId
+      await db.transact(
+        db.tx.sessions[sid]
+          .update({ code, status: 'active', createdAt: Date.now(), allowedEmails })
+          .link(links)
+      )
+      navigate(`/organizer/sessions/${sid}`)
+      setMessage('')
+    } catch (err) {
+      setMessage(err?.message || 'Failed to create session')
     }
   }
 
-  if (!user) return null
-  if (profile && !isOrganizer) {
-    navigate('/check-in')
-    return null
-  }
+  useEffect(() => {
+    if (profile && !isOrganizer) navigate('/check-in', { replace: true })
+  }, [profile, isOrganizer, navigate])
+
+  if (!user || isLoading) return <div className="loading">Loading...</div>
+  if (profile && !isOrganizer) return null
 
   return (
     <EnsureProfile>

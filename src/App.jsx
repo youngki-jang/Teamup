@@ -8,7 +8,7 @@ import MyTeam from './pages/MyTeam'
 import MasterBoard from './pages/MasterBoard'
 import './App.css'
 
-function ProtectedRoute({ children, requireOrganizer }) {
+function ProtectedRoute({ children }) {
   const { isLoading, user } = db.useAuth()
   if (isLoading) return <div className="loading">Loading...</div>
   if (!user) return <Navigate to="/login" replace />

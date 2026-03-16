@@ -1,6 +1,3 @@
-/**
- * 균형 그룹 배정 알고리즘
- */
 function shuffle(array) {
   const arr = [...array]
   for (let i = arr.length - 1; i > 0; i--) {
@@ -11,9 +8,9 @@ function shuffle(array) {
 }
 
 /**
- * @param {string[]} attendeeIds - 출석한 user id 배열
- * @param {string} mode - 'perGroup' | 'totalGroups'
- * @param {number} value - 그룹당 인원 또는 총 그룹 수
+ * @param {string[]} attendeeIds
+ * @param {'perGroup'|'totalGroups'} mode
+ * @param {number} value - members per group, or total number of groups
  */
 export function createBalancedGroups(attendeeIds, mode, value) {
   const n = attendeeIds.length

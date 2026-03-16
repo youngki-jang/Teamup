@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { id } from '@instantdb/react'
 import { db } from '../lib/db'
@@ -6,20 +6,15 @@ import { createBalancedGroups } from '../utils/grouping'
 import EnsureProfile from '../components/EnsureProfile'
 import './OrganizerConsole.css'
 
-function generateCode() {
-  return String(1000 + Math.floor(Math.random() * 9000))
-}
-
 export default function OrganizerSession() {
   const { id: sessionId } = useParams()
   const navigate = useNavigate()
   const user = db.useUser()
   const [groupMode, setGroupMode] = useState('perGroup')
   const [groupValue, setGroupValue] = useState(4)
-  const [manualEmail, setManualEmail] = useState('')
   const [message, setMessage] = useState('')
 
-  const { data } = db.useQuery(
+  const { data, isLoading } = db.useQuery(
     user && sessionId
       ? {
           profiles: { $: { where: { $user: user.id } } },
@@ -109,19 +104,23 @@ export default function OrganizerSession() {
           .update({ groupNumber: g.groupNumber, memberIds: g.memberIds })
           .link({ session: session.id })
       })
-      await db.transact([...deleteTxs, ...createTxs])
-      await db.transact(db.tx.sessions[session.id].update({ status: 'grouped' }))
+      await db.transact([
+        ...deleteTxs,
+        ...createTxs,
+        db.tx.sessions[session.id].update({ status: 'grouped' }),
+      ])
       setMessage('')
     } catch (err) {
       setMessage(err?.message || 'Shuffle failed')
     }
   }
 
-  if (!user) return null
-  if (profile && !isOrganizer) {
-    navigate('/check-in')
-    return null
-  }
+  useEffect(() => {
+    if (profile && !isOrganizer) navigate('/check-in', { replace: true })
+  }, [profile, isOrganizer, navigate])
+
+  if (!user || isLoading) return <div className="loading">Loading...</div>
+  if (profile && !isOrganizer) return null
 
   return (
     <EnsureProfile>

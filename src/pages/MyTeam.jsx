@@ -8,7 +8,7 @@ export default function MyTeam() {
   const navigate = useNavigate()
   const user = db.useUser()
 
-  const { data } = db.useQuery(
+  const { data, isLoading } = db.useQuery(
     user && sessionId
       ? {
           sessions: {
@@ -19,6 +19,8 @@ export default function MyTeam() {
         }
       : null
   )
+
+  if (isLoading) return <div className="loading">Loading...</div>
 
   const session = data?.sessions?.[0]
   const attendances = session?.attendances ?? []

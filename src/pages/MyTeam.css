@@ -22,7 +22,7 @@
 
 .my-team-page .teammates {
   text-align: left;
-  background: #f5f5f5;
+  background: var(--bg-card);
   padding: 1.5rem;
   border-radius: 8px;
 }
@@ -34,9 +34,9 @@
 
 .my-team-page .waiting {
   font-size: 1.2rem;
-  color: #666;
+  color: var(--text-muted);
 }
 
 .my-team-page .error {
-  color: #c00;
+  color: var(--text-muted);
 }
