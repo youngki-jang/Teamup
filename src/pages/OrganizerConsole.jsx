@@ -56,7 +56,7 @@ export default function OrganizerConsole() {
             groups: {},
           },
           roster_lists: {
-            $: { where: { 'organizer.id': user.id } },
+            $: { where: { organizerId: user.id } },
           },
         }
       : null
@@ -80,9 +80,11 @@ export default function OrganizerConsole() {
     const rid = id()
     try {
       await db.transact(
-        db.tx.roster_lists[rid]
-          .update({ name: newRosterName.trim(), entries })
-          .link({ organizer: user.id })
+        db.tx.roster_lists[rid].update({
+          name: newRosterName.trim(),
+          entries,
+          organizerId: user.id,
+        })
       )
       setShowNewRoster(false)
       setNewRosterName('')

@@ -12,6 +12,7 @@ const schema = i.schema({
     roster_lists: i.entity({
       name: i.string(), // e.g. "CS101 Fall 2025"
       entries: i.json(), // [{ email, name }] from Canvas export
+      organizerId: i.string().indexed(), // user id (avoids link permission issues)
     }),
     sessions: i.entity({
       code: i.string().unique().indexed(),
@@ -50,10 +51,6 @@ const schema = i.schema({
     groupSession: {
       forward: { on: 'groups', has: 'one', label: 'session' },
       reverse: { on: 'sessions', has: 'many', label: 'groups' },
-    },
-    rosterListOrganizer: {
-      forward: { on: 'roster_lists', has: 'one', label: 'organizer' },
-      reverse: { on: '$users', has: 'many', label: 'roster_lists' },
     },
     sessionRosterList: {
       forward: { on: 'sessions', has: 'one', label: 'rosterList' },
