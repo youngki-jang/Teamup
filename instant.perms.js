@@ -17,10 +17,10 @@ const rules = {
   },
   roster_lists: {
     allow: {
-      view: 'auth.id == data.organizerId',
+      view: 'data.organizerId != null && auth.id == data.organizerId',
       create: 'auth.id != null',
-      update: 'auth.id == data.organizerId',
-      delete: 'auth.id == data.organizerId',
+      update: 'data.organizerId != null && auth.id == data.organizerId',
+      delete: 'data.organizerId != null && auth.id == data.organizerId',
     },
   },
   sessions: {

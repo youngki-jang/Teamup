@@ -12,7 +12,7 @@ const schema = i.schema({
     roster_lists: i.entity({
       name: i.string(), // e.g. "CS101 Fall 2025"
       entries: i.json(), // [{ email, name }] from Canvas export
-      organizerId: i.string().indexed(), // user id (avoids link permission issues)
+      organizerId: i.string().indexed().optional(), // user id (optional for old records)
     }),
     sessions: i.entity({
       code: i.string().unique().indexed(),
